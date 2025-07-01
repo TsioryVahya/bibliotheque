@@ -69,11 +69,7 @@ public class AuthController {
             boolean isBiblio = bibliothecaireRepository.findAll().stream()
                     .anyMatch(b -> b.getUtilisateur().getId().equals(utilisateur.getId()));
             System.out.println("Type d'utilisateur : " + (isBiblio ? "BIBLIOTHECAIRE" : "CLIENT"));
-            if (isBiblio) {
-                return "/pages/admin/home_bibliothecaire";
-            } else {
-                return "/pages/home_client.html";
-            }
+            return "redirect:/home";
         } catch (Exception e) {
             System.out.println("Erreur lors de l'authentification : " + e.getMessage());
             throw e; // Pour voir la stacktrace complète dans la console
@@ -83,8 +79,10 @@ public class AuthController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/pages/auth/login.html";
+        return "/pages/auth/login";
     }
+
+
 
     @GetMapping("/login")
     public String showLoginForm(@RequestParam(value = "error", required = false) String error, Model model) {
