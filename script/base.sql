@@ -55,13 +55,31 @@ CREATE TABLE Livres (
 );
 
 -- La table des exemplaires (la copie physique)
+-- 1. D'abord créer la table des états
+CREATE TABLE Etats_Exemplaire (
+    id_etat SERIAL PRIMARY KEY,
+    code_etat VARCHAR(20) NOT NULL UNIQUE,
+    libelle VARCHAR(50) NOT NULL,
+    peut_etre_emprunte BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+-- 2. Insérer les états prédéfinis
+INSERT INTO Etats_Exemplaire (code_etat, libelle, peut_etre_emprunte) VALUES
+('DISPONIBLE', 'Disponible', true),
+('EMPRUNTE', 'Emprunté', false),
+('RESERVE', 'Réservé', false),
+('REPARATION', 'En réparation', false),
+('PERDU', 'Perdu', false);
+
+-- 3. Créer la table Exemplaires avec référence à Etats_Exemplaire
 CREATE TABLE Exemplaires (
     id_exemplaire SERIAL PRIMARY KEY,
     id_livre INT NOT NULL,
     code_barres VARCHAR(100) UNIQUE NOT NULL,
-    etat ENUM('disponible', 'emprunte', 'reserve', 'en_reparation', 'perdu') NOT NULL DEFAULT 'disponible',
+    id_etat INT NOT NULL DEFAULT 1, -- 1 = DISPONIBLE par défaut
     consultable_sur_place_uniquement BOOLEAN NOT NULL DEFAULT FALSE,
-    FOREIGN KEY (id_livre) REFERENCES Livres(id_livre) ON DELETE CASCADE
+    FOREIGN KEY (id_livre) REFERENCES Livres(id_livre) ON DELETE CASCADE,
+    FOREIGN KEY (id_etat) REFERENCES Etats_Exemplaire(id_etat)
 );
 
 -- La table des emprunteurs (utilisateurs)
@@ -136,16 +154,32 @@ CREATE TABLE Emprunts (
     FOREIGN KEY (id_emprunteur) REFERENCES Emprunteurs(id_emprunteur)
 );
 
--- Table des réservations
+-- 1. Création de la table des statuts de réservation
+CREATE TABLE Statuts_Reservation (
+    id_statut SERIAL PRIMARY KEY,
+    code_statut VARCHAR(20) NOT NULL UNIQUE,
+    libelle VARCHAR(50) NOT NULL,
+    est_actif BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+-- 2. Insertion des statuts prédéfinis
+INSERT INTO Statuts_Reservation (code_statut, libelle, est_actif) VALUES
+('ACTIVE', 'Active', true),
+('HONOREE', 'Honorée', false),
+('ANNULEE', 'Annulée', false),
+('EXPIREE', 'Expirée', false);
+
+-- 3. Création de la table Reservations avec référence à Statuts_Reservation
 CREATE TABLE Reservations (
     id_reservation SERIAL PRIMARY KEY,
-    id_livre INT NOT NULL, -- On réserve un livre, pas un exemplaire spécifique
+    id_livre INT NOT NULL,
     id_emprunteur INT NOT NULL,
+    id_statut INT NOT NULL DEFAULT 1, -- 1 = ACTIVE par défaut
     date_demande TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    date_expiration DATE NOT NULL, -- Date après laquelle la réservation n'est plus valide
-    statut ENUM('active', 'honoree', 'annulee', 'expiree') NOT NULL DEFAULT 'active',
-    FOREIGN KEY (id_livre) REFERENCES Livres(id_livre),
-    FOREIGN KEY (id_emprunteur) REFERENCES Emprunteurs(id_emprunteur)
+    date_expiration DATE NOT NULL,
+    FOREIGN KEY (id_livre) REFERENCES Livres(id_livre) ON DELETE CASCADE,
+    FOREIGN KEY (id_emprunteur) REFERENCES Emprunteurs(id_emprunteur) ON DELETE CASCADE,
+    FOREIGN KEY (id_statut) REFERENCES Statuts_Reservation(id_statut)
 );
 
 -- Table des pénalités
