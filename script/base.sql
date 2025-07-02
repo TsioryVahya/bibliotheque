@@ -3,11 +3,7 @@
 CREATE TABLE Profils_Adherent (
     id_profil SERIAL PRIMARY KEY,
     nom_profil VARCHAR(100) NOT NULL UNIQUE,
-    quota_emprunts_simultanes INT NOT NULL DEFAULT 3,
-    duree_pret_domicile_jours INT NOT NULL DEFAULT 21,
-    duree_pret_sur_place_heures INT NOT NULL DEFAULT 3,
-    peut_prolonger_pret BOOLEAN NOT NULL DEFAULT TRUE,
-    jours_penalite_par_retard INT NOT NULL DEFAULT 1
+    quota_emprunts_simultanes INT NOT NULL DEFAULT 3
 );
 
 
@@ -116,20 +112,27 @@ CREATE TABLE Droits_Emprunt_Specifiques (
     id_livre INT NOT NULL,
     id_profil INT NOT NULL,
     age INT ,
+    emprunt_surplace_autorise BOOLEAN NOT NULL DEFAULT TRUE,
     emprunt_domicile_autorise BOOLEAN NOT NULL DEFAULT TRUE,
     UNIQUE (id_livre, id_profil),
     FOREIGN KEY (id_livre) REFERENCES Livres(id_livre) ON DELETE CASCADE,
     FOREIGN KEY (id_profil) REFERENCES Profils_Adherent(id_profil) ON DELETE CASCADE
 );
 
+
+CREATE TABLE Type_emprunts(
+    id_type_emprunt SERIAL PRIMARY KEY,
+    nom_type VARCHAR(50)
+);
+
 CREATE TABLE Emprunts (
     id_emprunt SERIAL PRIMARY KEY,
     id_exemplaire INT NOT NULL,
     id_adherent INT NOT NULL,
-    date_emprunt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    date_retour_prevue DATE NOT NULL,
-    date_retour_reelle DATE,
-    prolongations INT DEFAULT 0,
+    id_type_emprunt INT NOT NULL,
+    date_emprunt TIMESTAMP NOT NULL,
+    date_retour_prevue TIMESTAMP NOT NULL,
+    FOREIGN KEY (id_type_emprunt) REFERENCES Type_emprunts(id_type_emprunt),
     FOREIGN KEY (id_exemplaire) REFERENCES Exemplaires(id_exemplaire),
     FOREIGN KEY (id_adherent) REFERENCES Adherents(id_adherent)
 );
@@ -163,7 +166,7 @@ CREATE TABLE Penalites (
     id_emprunt INT NOT NULL,
     id_adherent INT NOT NULL,
     date_debut DATE NOT NULL,
-    date_fin DATE NOT NULL,
+    jour INT NOT NULL,
     raison VARCHAR(255),
     FOREIGN KEY (id_emprunt) REFERENCES Emprunts(id_emprunt),
     FOREIGN KEY (id_adherent) REFERENCES Adherents(id_adherent)
