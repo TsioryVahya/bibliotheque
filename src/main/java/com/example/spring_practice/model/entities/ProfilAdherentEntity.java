@@ -16,18 +16,6 @@ public class ProfilAdherentEntity {
     @Column(name = "quota_emprunts_simultanes", nullable = false)
     private int quotaEmpruntsSimultanes = 3;
 
-    @Column(name = "duree_pret_domicile_jours", nullable = false)
-    private int dureePretDomicileJours = 21;
-
-    @Column(name = "duree_pret_sur_place_heures", nullable = false)
-    private int dureePretSurPlaceHeures = 3;
-
-    @Column(name = "peut_prolonger_pret", nullable = false)
-    private boolean peutProlongerPret = true;
-
-    @Column(name = "jours_penalite_par_retard", nullable = false)
-    private int joursPenaliteParRetard = 1;
-
     // Getters et setters
     public Long getId() {
         return id;
@@ -51,37 +39,5 @@ public class ProfilAdherentEntity {
 
     public void setQuotaEmpruntsSimultanes(int quotaEmpruntsSimultanes) {
         this.quotaEmpruntsSimultanes = quotaEmpruntsSimultanes;
-    }
-
-    public int getDureePretDomicileJours() {
-        return dureePretDomicileJours;
-    }
-
-    public void setDureePretDomicileJours(int dureePretDomicileJours) {
-        this.dureePretDomicileJours = dureePretDomicileJours;
-    }
-
-    public int getDureePretSurPlaceHeures() {
-        return dureePretSurPlaceHeures;
-    }
-
-    public void setDureePretSurPlaceHeures(int dureePretSurPlaceHeures) {
-        this.dureePretSurPlaceHeures = dureePretSurPlaceHeures;
-    }
-
-    public boolean isPeutProlongerPret() {
-        return peutProlongerPret;
-    }
-
-    public void setPeutProlongerPret(boolean peutProlongerPret) {
-        this.peutProlongerPret = peutProlongerPret;
-    }
-
-    public int getJoursPenaliteParRetard() {
-        return joursPenaliteParRetard;
-    }
-
-    public void setJoursPenaliteParRetard(int joursPenaliteParRetard) {
-        this.joursPenaliteParRetard = joursPenaliteParRetard;
     }
 }
