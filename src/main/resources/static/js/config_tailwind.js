@@ -3,10 +3,10 @@ tailwind.config = {
     theme: {
         extend: {
             colors: {
-                'custom-light': '#E7EFC7',
-                'custom-medium': '#AEC8A4',
-                'custom-dark': '#8A784E',
-                'custom-darker': '#3B3B1A',
+                'custom-light': '#F6F8D5',
+                'custom-medium': '#98D2C0',
+                'custom-dark': '#4F959D',
+                'custom-darker': '#205781',
             },
             animation: {
                 'fade-in': 'fadeIn 0.5s ease-in-out',

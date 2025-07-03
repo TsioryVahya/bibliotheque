@@ -46,6 +46,7 @@ Dashboard
 
 ### 🔹 Gestion des pénalités
 
+
 * Une pénalité est calculée selon la formule : `(jours de retard) x (montant par jour)`.
 * Le montant peut varier selon le type d’emprunteur ou de prêt.
 * Les pénalités doivent pouvoir être réglées ou expirer avec le temps.
@@ -120,3 +121,10 @@ Site : [https://www.sigb.net](https://www.sigb.net)
 ---
 
 > Ce document résume les règles essentielles et les fonctionnalités de base d’un projet réel de gestion de bibliothèque, adaptable selon les spécificités du contexte.
+
+
+exception:
+abonnement
+penalites
+quantites exemplaire
+quota
