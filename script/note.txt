@@ -124,7 +124,16 @@ Site : [https://www.sigb.net](https://www.sigb.net)
 
 
 exception:
+Emprunt:
 abonnement
 penalites
 quantites exemplaire
 quota
+
+Abonemment:
+raha efa manana de amin'iny volana iny de tsy afaka manatsofoka tsony
+
+Prolongement:
+date fin prolongement > date fin emprunt
+
+
