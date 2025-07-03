@@ -61,3 +61,9 @@ INSERT INTO Livres_Categories (id_livre, id_categorie) VALUES
 -- Données de test pour Type_emprunts
 INSERT INTO Type_emprunts (nom_type) VALUES ('Sur place');
 INSERT INTO Type_emprunts (nom_type) VALUES ('À domicile');
+
+-- Insertion de statuts d'emprunt
+INSERT INTO Statuts_Emprunt (code_statut) VALUES ('En cours');
+INSERT INTO Statuts_Emprunt (code_statut) VALUES ('Rendu');
+INSERT INTO Statuts_Emprunt (code_statut) VALUES ('Retard');
+INSERT INTO Statuts_Emprunt (code_statut) VALUES ('Perdu');
