@@ -15,6 +15,8 @@ import com.example.spring_practice.repository.TypeEmpruntRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping("/emprunts")
@@ -31,7 +33,12 @@ public class EmpruntController {
     @GetMapping
     public String listEmprunts(Model model) {
         List<EmpruntEntity> emprunts = empruntService.findAll();
+        Map<Long, String> statuts = new HashMap<>();
+        for (EmpruntEntity e : emprunts) {
+            statuts.put(e.getId(), empruntService.getLastStatutForEmprunt(e.getId()));
+        }
         model.addAttribute("emprunts", emprunts);
+        model.addAttribute("statuts", statuts);
         return "pages/admin/list_emprunt";
     }
 
@@ -69,6 +76,12 @@ public class EmpruntController {
     @GetMapping("/delete/{id}")
     public String deleteEmprunt(@PathVariable Long id) {
         empruntService.deleteById(id);
+        return "redirect:/emprunts";
+    }
+
+    @GetMapping("/return/{id}")
+    public String returnEmprunt(@PathVariable Long id) {
+        empruntService.returnEmprunt(id);
         return "redirect:/emprunts";
     }
 } 
