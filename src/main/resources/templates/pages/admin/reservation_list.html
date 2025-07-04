@@ -30,7 +30,7 @@
                                 <th class="py-2 px-4">Adhérent</th>
                                 <th class="py-2 px-4">Statut</th>
                                 <th class="py-2 px-4">Date demande</th>
-                                <th class="py-2 px-4">Date expiration</th>
+                                <th class="py-2 px-4">Date à réserver</th>
                                 <th class="py-2 px-4">Actions</th>
                             </tr>
                         </thead>
@@ -40,17 +40,22 @@
                                 <td class="py-2 px-4" th:text="${reservation.livre.titre}"></td>
                                 <td class="py-2 px-4"
                                     th:text="|${reservation.adherent.nom} ${reservation.adherent.prenom}|"></td>
-                                <td class="py-2 px-4" th:text="${reservation.statut.codeStatut}"></td>
+                                <td class="py-2 px-4" th:text="${statuts[reservation.id]}"></td>
                                 <td class="py-2 px-4"
                                     th:text="${#temporals.format(reservation.dateDemande, 'dd/MM/yyyy HH:mm')}"></td>
-                                <td class="py-2 px-4" th:text="${reservation.dateExpiration}"></td>
-                                <td class="py-2 px-4">
+                                <td class="py-2 px-4" th:text="${reservation.dateAReserver}"></td>
+                                <td class="py-2 px-4 flex gap-2">
+                                    <form th:action="@{'/reservations/valider/' + ${reservation.id}}" method="post"
+                                        th:if="${statuts[reservation.id]} == 'En attente'"
+                                        onsubmit="return confirm('Valider cette réservation ?')">
+                                        <button type="submit" class="text-green-600 hover:underline">Valider</button>
+                                    </form>
                                     <a th:href="@{'/reservations/delete/' + ${reservation.id}}"
                                         class="text-red-600 hover:underline">Supprimer</a>
                                 </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(reservations)}">
-                                <td colspan="7" class="text-center py-4 text-gray-500">Aucune réservation trouvée.</td>
+                                <td colspan="6" class="text-center py-4 text-gray-500">Aucune réservation trouvée.</td>
                             </tr>
                         </tbody>
                     </table>
