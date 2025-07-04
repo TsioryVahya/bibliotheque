@@ -66,4 +66,18 @@ public class LivreController {
         livreService.save(livre);
         return "redirect:/livres";
     }
+
+    @GetMapping("/client/list")
+    public String listLivresClient(@RequestParam(value = "titre", required = false) String titre, Model model) {
+        List<LivreEntity> livres;
+        if (titre != null && !titre.isEmpty()) {
+            livres = livreService.findByTitreContainingIgnoreCase(titre);
+        } else {
+            livres = livreService.findAll();
+        }
+        model.addAttribute("livres", livres);
+        model.addAttribute("titre", titre);
+        model.addAttribute("activePage_client", "livres");
+        return "pages/client/livre_list";
+    }
 } 
