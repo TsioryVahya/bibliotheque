@@ -43,7 +43,9 @@ CREATE TABLE Livres (
     annee_publication INT,
     resume TEXT,
     id_editeur INT,
-    FOREIGN KEY (id_editeur) REFERENCES Editeurs(id_editeur)
+    id_auteur INT,
+    FOREIGN KEY (id_editeur) REFERENCES Editeurs(id_editeur),
+    FOREIGN KEY (id_auteur) REFERENCES Auteurs(id_auteur)
 );
 
 CREATE TABLE Utilisateurs (
@@ -74,14 +76,6 @@ CREATE TABLE Bibliothecaires (
     FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id_utilisateur)
 );
 
--- 5. Création des tables de liaison
-CREATE TABLE Livres_Auteurs (
-    id_livre INT NOT NULL,
-    id_auteur INT NOT NULL,
-    PRIMARY KEY (id_livre, id_auteur),
-    FOREIGN KEY (id_livre) REFERENCES Livres(id_livre) ON DELETE CASCADE,
-    FOREIGN KEY (id_auteur) REFERENCES Auteurs(id_auteur) ON DELETE CASCADE
-);
 
 CREATE TABLE Livres_Categories (
     id_livre INT NOT NULL,

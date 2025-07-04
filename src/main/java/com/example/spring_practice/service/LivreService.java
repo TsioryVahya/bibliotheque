@@ -23,4 +23,8 @@ public class LivreService {
     public LivreEntity findById(Long id) {
         return livreRepository.findById(id).orElse(null);
     }
+
+    public LivreEntity save(LivreEntity livre) {
+        return livreRepository.save(livre);
+    }
 } 
