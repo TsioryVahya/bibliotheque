@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des membres</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+<div th:replace="fragments/sidebar :: sidebar"></div>
+
+<div class="ml-64 p-8">
+    <h1 class="text-2xl font-bold mb-4">Liste des membres</h1>
+
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="min-w-full bg-white">
+            <thead class="bg-gray-800 text-white">
+            <tr>
+                <th class="w-1/4 py-3 px-4 uppercase font-semibold text-sm">Id</th>
+                <th class="w-1/4 py-3 px-4 uppercase font-semibold text-sm">Nom</th>
+                <th class="w-1/4 py-3 px-4 uppercase font-semibold text-sm">Email</th>
+            </tr>
+            </thead>
+            <tbody class="text-gray-700">
+            <tr th:each="membre : ${membres}">
+                <td class="w-1/4 py-3 px-4" th:text="${membre.id}"></td>
+                <td class="w-1/4 py-3 px-4" th:text="${membre.nom}"></td>
+                <td class="w-1/4 py-3 px-4" th:text="${membre.utilisateur.email}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
