@@ -58,7 +58,7 @@ INSERT INTO Type_emprunts (nom_type) VALUES ('À domicile');
 -- Insertion de statuts d'emprunt
 INSERT INTO Statuts_Emprunt (code_statut) VALUES ('En cours');
 INSERT INTO Statuts_Emprunt (code_statut) VALUES ('Rendu');
-INSERT INTO Statuts_Emprunt (code_statut) VALUES ('Retard');
+INSERT INTO Statuts_Emprunt (code_statut) VALUES ('Retourner');
 INSERT INTO Statuts_Emprunt (code_statut) VALUES ('Perdu');
 
 -- Insertion de statuts de réservation
@@ -66,3 +66,9 @@ INSERT INTO Statuts_Reservation (code_statut) VALUES ('En attente');
 INSERT INTO Statuts_Reservation (code_statut) VALUES ('Validée');
 INSERT INTO Statuts_Reservation (code_statut) VALUES ('Annulée');
 INSERT INTO Statuts_Reservation (code_statut) VALUES ('Expirée');
+
+-- Données de base pour Statuts_Prolongement
+INSERT INTO Statuts_Prolongement (code_statut) VALUES
+    ('En attente'),
+    ('Validé'),
+    ('Refusé');
