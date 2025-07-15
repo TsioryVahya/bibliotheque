@@ -159,8 +159,8 @@ public class ProlongementController {
     public String validerProlongement(@PathVariable Long id) {
         ProlongementEntity prolongement = prolongementService.findById(id).orElse(null);
         if (prolongement == null) return "redirect:/prolongements";
-        com.example.spring_practice.model.entities.StatutProlongementEntity statutValide = statutProlongementRepository.findByCodeStatut("Validé")
-            .orElseThrow(() -> new IllegalStateException("Statut 'Validé' introuvable"));
+        com.example.spring_practice.model.entities.StatutProlongementEntity statutValide = statutProlongementRepository.findByCodeStatut("Valide")
+            .orElseThrow(() -> new IllegalStateException("Statut 'Valide' introuvable"));
         com.example.spring_practice.model.entities.MvtProlongementEntity mvt = new com.example.spring_practice.model.entities.MvtProlongementEntity();
         mvt.setProlongement(prolongement);
         mvt.setStatutNouveau(statutValide);

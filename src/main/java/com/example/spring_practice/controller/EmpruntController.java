@@ -57,7 +57,7 @@ public class EmpruntController {
                         .filter(m -> m.getProlongement().getId().equals(prolongement.getId()))
                         .max(java.util.Comparator.comparing(com.example.spring_practice.model.entities.MvtProlongementEntity::getDateMouvement))
                         .orElse(null);
-                if (dernierMvt != null && "Validé".equalsIgnoreCase(dernierMvt.getStatutNouveau().getCodeStatut())) {
+                if (dernierMvt != null && "Valide".equalsIgnoreCase(dernierMvt.getStatutNouveau().getCodeStatut())) {
                     dateFinAAfficher = prolongement.getDateFin();
                 }
             }
@@ -125,9 +125,11 @@ public class EmpruntController {
     @PostMapping("/return/{id}")
     public String processReturn(@PathVariable Long id,
                                 @RequestParam("dateRetour") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime dateRetour,
-                                Model model) {
+                                Model model,
+                                RedirectAttributes redirectAttributes) {
         EmpruntEntity emprunt = empruntService.findById(id).orElse(null);
         if (emprunt == null) {
+            redirectAttributes.addFlashAttribute("error", "Emprunt introuvable.");
             return "redirect:/emprunts";
         }
         empruntService.returnEmprunt(id, dateRetour);
@@ -139,7 +141,7 @@ public class EmpruntController {
                     .filter(m -> m.getProlongement().getId().equals(prolongement.getId()))
                     .max(java.util.Comparator.comparing(com.example.spring_practice.model.entities.MvtProlongementEntity::getDateMouvement))
                     .orElse(null);
-            if (dernierMvt != null && "Validé".equalsIgnoreCase(dernierMvt.getStatutNouveau().getCodeStatut())) {
+            if (dernierMvt != null && "Valide".equalsIgnoreCase(dernierMvt.getStatutNouveau().getCodeStatut())) {
                 datePrevue = prolongement.getDateFin();
             }
         }
@@ -148,7 +150,6 @@ public class EmpruntController {
             penalite.setEmprunt(emprunt);
             penalite.setAdherent(emprunt.getAdherent());
             java.time.LocalDate dateDebutPenalite = dateRetour.toLocalDate();
-            // Vérifier la dernière pénalité de l'adhérent
             com.example.spring_practice.model.entities.PenaliteEntity dernierePenalite = penaliteService
                 .findLastPenaliteForAdherent(emprunt.getAdherent().getId());
             if (dernierePenalite != null) {
@@ -158,11 +159,14 @@ public class EmpruntController {
                 }
             }
             penalite.setDateDebut(dateDebutPenalite);
-            model.addAttribute("emprunt", emprunt);
-            model.addAttribute("penalite", penalite);
-            model.addAttribute("penaliteAProposer", true);
-            return "pages/admin/emprunt_return_form";
+            int quotaPenalitesJours = emprunt.getAdherent().getProfil().getQuotaPenalitesJours();
+            penalite.setJour(quotaPenalitesJours);
+            penalite.setRaison("en retard");
+            penaliteService.save(penalite);
+            redirectAttributes.addFlashAttribute("error", "Livre rendu avec pénalité pour retard (" + quotaPenalitesJours + " jours).");
+            return "redirect:/emprunts";
         }
+        redirectAttributes.addFlashAttribute("success", "Livre rendu avec succès.");
         return "redirect:/emprunts";
     }
 

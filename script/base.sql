@@ -1,9 +1,13 @@
--- 2. Création des tables de référence
+DROP DATABASE bibliotheque;
+CREATE DATABASE bibliotheque;
+
+\c bibliotheque;
 
 CREATE TABLE Profils_Adherent (
     id_profil SERIAL PRIMARY KEY,
     nom_profil VARCHAR(100) NOT NULL UNIQUE,
-    quota_emprunts_simultanes INT NOT NULL DEFAULT 3
+    quota_emprunts_simultanes INT NOT NULL DEFAULT 3,
+    quota_penalites_jours INT NOT NULL DEFAULT 0
 );
 
 

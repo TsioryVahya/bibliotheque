@@ -168,7 +168,7 @@ public class EmpruntService {
         ProlongementEntity prolongement = prolongementRepository.findTopByEmpruntIdOrderByDateFinDesc(empruntId);
         if (prolongement != null && prolongement.getDateFin() != null) {
             MvtProlongementEntity dernierMvt = getLastMvtProlongement(prolongement.getId());
-            if (dernierMvt != null && "Validé".equalsIgnoreCase(dernierMvt.getStatutNouveau().getCodeStatut())) {
+            if (dernierMvt != null && "Valide".equalsIgnoreCase(dernierMvt.getStatutNouveau().getCodeStatut())) {
                 datePrevue = prolongement.getDateFin();
             }
             // Sinon, on garde la datePrevue d'origine (pas de prise en compte du prolongement)
