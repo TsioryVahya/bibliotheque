@@ -1,34 +1,126 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Liste des membres</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body class="bg-gray-100">
-<div th:replace="fragments/sidebar :: sidebar"></div>
 
-<div class="ml-64 p-8">
-    <h1 class="text-2xl font-bold mb-4">Liste des membres</h1>
-
-    <div class="bg-white shadow-md rounded-lg overflow-hidden">
-        <table class="min-w-full bg-white">
-            <thead class="bg-gray-800 text-white">
-            <tr>
-                <th class="w-1/4 py-3 px-4 uppercase font-semibold text-sm">Id</th>
-                <th class="w-1/4 py-3 px-4 uppercase font-semibold text-sm">Nom</th>
-                <th class="w-1/4 py-3 px-4 uppercase font-semibold text-sm">Email</th>
-            </tr>
-            </thead>
-            <tbody class="text-gray-700">
-            <tr th:each="membre : ${membres}">
-                <td class="w-1/4 py-3 px-4" th:text="${membre.id}"></td>
-                <td class="w-1/4 py-3 px-4" th:text="${membre.nom}"></td>
-                <td class="w-1/4 py-3 px-4" th:text="${membre.utilisateur.email}"></td>
-            </tr>
-            </tbody>
-        </table>
+<body class="bg-gradient-to-br from-custom-light to-custom-medium min-h-screen font-sans">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div class="content">
+        <div class="ml-5 flex-1">
+            <div th:replace="~{fragments/sidebar :: header}"></div>
+            <main class="p-6">
+                <h2 class="text-2xl font-bold mb-6">Liste des membres</h2>
+                <a href="/membres/new"
+                    class="mb-4 inline-block bg-custom-dark text-white px-4 py-2 rounded hover:bg-custom-darker transition">Ajouter
+                    un membre</a>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white rounded-xl shadow-md">
+                        <thead>
+                            <tr class="bg-custom-medium text-custom-darker">
+                                <th class="py-2 px-4">ID</th>
+                                <th class="py-2 px-4">Nom</th>
+                                <th class="py-2 px-4">Email</th>
+                                <th class="py-2 px-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="membre : ${membres}" class="border-b hover:bg-custom-light">
+                                <td class="py-2 px-4" th:text="${membre.id}"></td>
+                                <td class="py-2 px-4" th:text="${membre.nom}"></td>
+                                <td class="py-2 px-4" th:text="${membre.utilisateur.email}"></td>
+                                <td class="py-2 px-4">
+                                    <button type="button"
+                                        class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-800 transition voir-details-membre-btn"
+                                        th:data-id="${membre.id}">Voir détails</button>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(membres)}">
+                                <td colspan="3" class="text-center py-4 text-gray-500">Aucun membre trouvé.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
     </div>
-</div>
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/config_tailwind.js}"></script>
+    <!-- Modal pour afficher les détails du membre -->
+    <div id="modal-details-membre"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
+            <button id="close-modal-membre"
+                class="absolute top-2 right-2 text-gray-500 hover:text-gray-800">&times;</button>
+            <h3 class="text-xl font-bold mb-4">Détails du membre</h3>
+            <div id="modal-content-details-membre">
+                <!-- Les détails seront injectés ici -->
+            </div>
+        </div>
+    </div>
+    <script>
+        document.querySelectorAll('.voir-details-membre-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const id = this.getAttribute('data-id');
+                fetch(`/membres/api/${id}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        let html = '';
+                        if (data.error) {
+                            html = `<div class='text-red-600'>${data.error}</div>`;
+                        } else {
+                            html = `<ul class='space-y-2'>
+                                <li><b>ID :</b> ${data.id}</li>
+                                <li><b>Nom :</b> ${data.nom}</li>
+                                <li><b>Prénom :</b> ${data.prenom}</li>
+                                <li><b>Date de naissance :</b> ${data.dateNaissance || '-'} </li>`;
+                            if (data.profilAdherent) {
+                                html += `<li><b>Profil :</b> ${data.profilAdherent.nomProfil} (Quota emprunts : ${data.profilAdherent.quotaEmpruntsSimultanes}, Quota pénalités : ${data.profilAdherent.quotaPenalitesJours})</li>`;
+                            }
+                            html += `<li><b>Quota restant :</b> ${data.quotaRestant}</li>`;
+                            // Ajout de l'info pénalité en cours ou non
+                            if (data.penaliteEnCours) {
+                                html += `<li class='text-red-600 font-bold'>A une pénalité en cours</li>`;
+                            } else {
+                                html += `<li class='text-green-700 font-bold'>Pas de pénalité en cours</li>`;
+                            }
+                            if (data.abonnements && data.abonnements.length > 0) {
+                                html += `<li><b>Abonnements :</b><ul class='ml-4 list-disc'>`;
+                                data.abonnements.forEach(ab => {
+                                    html += `<li>Du ${ab.dateDebut} au ${ab.dateFin}</li>`;
+                                });
+                                html += `</ul></li>`;
+                            }
+                            if (data.penaliteEnCours) {
+                                html += `<li class='text-red-600'><b>Pénalité en cours :</b> du ${data.penaliteEnCours.dateDebut} au ${data.penaliteEnCours.dateFin} (${data.penaliteEnCours.raison})</li>`;
+                            }
+                            if (data.penalites && data.penalites.length > 0) {
+                                html += `<li><b>Historique des pénalités :</b><ul class='ml-4 list-disc'>`;
+                                data.penalites.forEach(p => {
+                                    html += `<li>Du ${p.dateDebut} au ${p.dateFin} (${p.raison})</li>`;
+                                });
+                                html += `</ul></li>`;
+                            }
+                            html += `</ul>`;
+                        }
+                        document.getElementById('modal-content-details-membre').innerHTML = html;
+                        document.getElementById('modal-details-membre').classList.remove('hidden');
+                    });
+            });
+        });
+        document.getElementById('close-modal-membre').addEventListener('click', function () {
+            document.getElementById('modal-details-membre').classList.add('hidden');
+        });
+        document.getElementById('modal-details-membre').addEventListener('click', function (e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+            }
+        });
+    </script>
 </body>
+
 </html>
